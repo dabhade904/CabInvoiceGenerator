@@ -9,7 +9,7 @@ namespace CabInvoiceGenerator
     public class InvoiceGenerator
     {
         RideType rideType;
-        private RideRepositoty rideRepositoty;
+        private RideRepositoty rideRepository;
 
         private double MINIMUM_COST_PER_KM;
         private int COST_PER_TIME;
@@ -18,7 +18,7 @@ namespace CabInvoiceGenerator
         public InvoiceGenerator(RideType rideType)
         {
             this.rideType = rideType;
-            this.rideRepositoty = rideRepositoty;
+            this.rideRepository = rideRepository;
             try
             {
                 if (rideType.Equals(RideType.PREMIUM))
@@ -63,6 +63,53 @@ namespace CabInvoiceGenerator
                 }
             }
             return Math.Max(totalFare,MINIMUM_FARE);
+        }
+
+        public void AddRide(string userId, Ride[] rides)
+        {
+            try
+            {
+                rideRepository.AddRide(userId, rides);
+            }
+            catch (CabInvoiceException)
+            {
+                if (rides == null)
+                {
+                    throw new CabInvoiceException(CabInvoiceException.ExceptionType.NULL_RIDES, "Rides are null");
+                }
+            }
+        }
+
+        public InvoiceSummary GetInvoiceSummary(string userId)
+        {
+            try
+            {
+                return this.CalculateFare(rideRepository.GetRides(userId));
+            }
+            catch (CabInvoiceException)
+            {
+                throw new CabInvoiceException(CabInvoiceException.ExceptionType.INVALID_USER_ID, "Invalid user id");
+            }
+        }
+
+        private InvoiceSummary CalculateFare(Ride[] rides)
+        {
+            double totalFare = 0;
+            try
+            {
+                foreach(Ride ride in rides)
+                {
+                    totalFare += this.CalculateFare(ride.distance, ride.time);
+                }
+            }
+            catch (CabInvoiceException)
+            {
+                if(rides == null)
+                {
+                    throw new CabInvoiceException(CabInvoiceException.ExceptionType.NULL_RIDES, "Rides are null");
+                }
+            }
+            return new InvoiceSummary(rides.Length, totalFare);
         }
     }
 }

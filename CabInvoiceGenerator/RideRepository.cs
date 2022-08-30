@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace CabInvoiceGenerator
 {
-    public class RideRepositoty
+    public class RideRepository
     {
         Dictionary<string,List<Ride>> userRides=null;
 
-        public RideRepositoty()
+        public RideRepository()
         {
             this.userRides=new Dictionary<string,List<Ride>>(); 
         }

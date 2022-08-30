@@ -9,7 +9,7 @@ namespace CabInvoiceGenerator
     public class InvoiceGenerator
     {
         RideType rideType;
-        private RideRepositoty rideRepository;
+        private RideRepository rideRepository;
 
         private double MINIMUM_COST_PER_KM;
         private int COST_PER_TIME;
